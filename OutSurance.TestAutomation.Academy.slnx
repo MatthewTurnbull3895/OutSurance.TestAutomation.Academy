@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TestAutomation.Core/TestAutomation.Core.csproj" />
+    <Project Path="src/TestAutomation.PageObjects/TestAutomation.PageObjects.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TestAutomation.Challenges.API/TestAutomation.Challenges.API.csproj" />
+    <Project Path="tests/TestAutomation.Challenges.UI/TestAutomation.Challenges.UI.csproj" />
+  </Folder>
+</Solution>

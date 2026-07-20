@@ -1,0 +1,211 @@
+using NUnit.Framework;
+using TestAutomation.Challenges.API.Base;
+
+namespace TestAutomation.Challenges.API.ReqRes;
+
+/// <summary>
+/// 🟢 CHALLENGE 3 — ReqRes Users API (Beginner → Intermediate)
+///
+/// Objective:
+///   Verify the core user-management endpoints exposed by https://reqres.in/api/users.
+///
+/// Skills practised:
+///   • Sending GET, POST, PUT, PATCH and DELETE requests via <see cref="ApiClient"/>
+///   • Asserting on HTTP status codes
+///   • Deserialising and inspecting JSON response bodies
+///   • Data-driven API tests with [TestCaseSource]
+///
+/// Setup:
+///   <see cref="BaseApiTest.Client"/> is pre-configured with the ReqRes base URL.
+///   All endpoints are relative, e.g. "/api/users" or "/api/users/2".
+///
+/// Acceptance criteria are stated in each test's XML doc comment.
+/// Implement ONLY the method body — do not change method signatures or attributes.
+/// </summary>
+[TestFixture]
+[Category("ReqRes")]
+[Category("Users")]
+public sealed class Challenge3_UserApiTests : BaseApiTest
+{
+    // -------------------------------------------------------------------------
+    // 🟢 Beginner tests
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Test: GET /api/users returns HTTP 200 and a non-empty user list.
+    ///
+    /// Steps:
+    ///   1. Send GET /api/users?page=1.
+    ///
+    /// Acceptance criteria:
+    ///   • Status code is 200 OK.
+    ///   • The response body contains a "data" array with at least one user.
+    ///   • Each user object has a non-zero "id" field.
+    /// </summary>
+    [Test]
+    [Description("🟢 Verify GET /api/users returns 200 and a populated user list.")]
+    public async Task GetUsers_ShouldReturn200_WithNonEmptyList()
+    {
+        throw new NotImplementedException("Complete this challenge!");
+    }
+
+    /// <summary>
+    /// Test: GET /api/users/{id} returns the correct single user.
+    ///
+    /// Steps:
+    ///   1. Send GET /api/users/2.
+    ///
+    /// Acceptance criteria:
+    ///   • Status code is 200 OK.
+    ///   • The response body contains a "data" object.
+    ///   • The "id" field equals 2.
+    ///   • The "email" field is not null or empty.
+    /// </summary>
+    [Test]
+    [Description("🟢 Verify GET /api/users/2 returns 200 with the correct user data.")]
+    public async Task GetUserById_ExistingUser_ShouldReturn200_WithCorrectData()
+    {
+        throw new NotImplementedException("Complete this challenge!");
+    }
+
+    /// <summary>
+    /// Test: GET /api/users/{id} for a non-existent user returns HTTP 404.
+    ///
+    /// Steps:
+    ///   1. Send GET /api/users/9999.
+    ///
+    /// Acceptance criteria:
+    ///   • Status code is 404 Not Found.
+    /// </summary>
+    [Test]
+    [Description("🟢 Verify GET /api/users/9999 returns 404 for a user that does not exist.")]
+    public async Task GetUserById_NonExistentUser_ShouldReturn404()
+    {
+        throw new NotImplementedException("Complete this challenge!");
+    }
+
+    // -------------------------------------------------------------------------
+    // 🟡 Intermediate tests
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Test: POST /api/users creates a new user and returns HTTP 201.
+    ///
+    /// Steps:
+    ///   1. Send POST /api/users with a JSON body containing "name" and "job" fields.
+    ///
+    /// Acceptance criteria:
+    ///   • Status code is 201 Created.
+    ///   • The response body contains an "id" field that is not null or empty.
+    ///   • The response body contains a "createdAt" timestamp field.
+    ///   • The "name" and "job" values in the response match what was sent.
+    /// </summary>
+    [Test]
+    [Description("🟡 Verify POST /api/users returns 201 and echoes back the created user data.")]
+    public async Task CreateUser_ValidPayload_ShouldReturn201_WithCreatedUser()
+    {
+        throw new NotImplementedException("Complete this challenge!");
+    }
+
+    /// <summary>
+    /// Test: PUT /api/users/{id} fully updates a user and returns HTTP 200.
+    ///
+    /// Steps:
+    ///   1. Send PUT /api/users/2 with a JSON body containing "name" and "job" fields.
+    ///
+    /// Acceptance criteria:
+    ///   • Status code is 200 OK.
+    ///   • The response body reflects the new "name" and "job" values.
+    ///   • The response body contains an "updatedAt" timestamp field.
+    /// </summary>
+    [Test]
+    [Description("🟡 Verify PUT /api/users/2 returns 200 and reflects the updated values.")]
+    public async Task UpdateUser_WithPut_ShouldReturn200_WithUpdatedValues()
+    {
+        throw new NotImplementedException("Complete this challenge!");
+    }
+
+    /// <summary>
+    /// Test: PATCH /api/users/{id} partially updates a user and returns HTTP 200.
+    ///
+    /// Steps:
+    ///   1. Send PATCH /api/users/2 with a JSON body containing only the "job" field.
+    ///
+    /// Acceptance criteria:
+    ///   • Status code is 200 OK.
+    ///   • The response body reflects the new "job" value.
+    ///   • The response body contains an "updatedAt" timestamp field.
+    /// </summary>
+    [Test]
+    [Description("🟡 Verify PATCH /api/users/2 returns 200 and reflects only the patched field.")]
+    public async Task UpdateUser_WithPatch_ShouldReturn200_WithPatchedValue()
+    {
+        throw new NotImplementedException("Complete this challenge!");
+    }
+
+    /// <summary>
+    /// Test: DELETE /api/users/{id} returns HTTP 204 with no response body.
+    ///
+    /// Steps:
+    ///   1. Send DELETE /api/users/2.
+    ///
+    /// Acceptance criteria:
+    ///   • Status code is 204 No Content.
+    ///   • The response body is empty.
+    /// </summary>
+    [Test]
+    [Description("🟡 Verify DELETE /api/users/2 returns 204 No Content.")]
+    public async Task DeleteUser_ExistingUser_ShouldReturn204_WithEmptyBody()
+    {
+        throw new NotImplementedException("Complete this challenge!");
+    }
+
+    // -------------------------------------------------------------------------
+    // 🟠 Advanced tests
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// Test: Paginated GET /api/users returns the correct page metadata.
+    ///
+    /// Steps:
+    ///   1. Send GET /api/users?page=2.
+    ///
+    /// Acceptance criteria:
+    ///   • Status code is 200 OK.
+    ///   • The "page" field in the response equals 2.
+    ///   • The "per_page" field is greater than 0.
+    ///   • The "total_pages" field is greater than 0.
+    ///   • The "data" array length equals the "per_page" value (or less on the last page).
+    /// </summary>
+    [Test]
+    [Description("🟠 Verify GET /api/users?page=2 returns correct pagination metadata.")]
+    public async Task GetUsers_Page2_ShouldReturnCorrectPaginationMetadata()
+    {
+        throw new NotImplementedException("Complete this challenge!");
+    }
+
+    /// <summary>
+    /// Test: Each user ID in a data-driven set can be fetched individually.
+    ///
+    /// Steps:
+    ///   1. For each user ID supplied by the test case source:
+    ///      a. Send GET /api/users/{id}.
+    ///      b. Assert status is 200.
+    ///      c. Assert the "id" in the response matches the requested ID.
+    ///
+    /// Acceptance criteria:
+    ///   • Each request returns 200 OK.
+    ///   • The "id" field in each response matches the requested ID.
+    ///
+    /// Hint: Use [TestCaseSource] to supply each user ID.
+    /// </summary>
+    [Test]
+    [TestCaseSource(nameof(KnownUserIds))]
+    [Description("🟠 Verify each known user ID can be fetched individually with correct data.")]
+    public async Task GetEachUser_ByKnownId_ShouldReturnMatchingId(int userId)
+    {
+        throw new NotImplementedException("Complete this challenge!");
+    }
+
+    private static IEnumerable<int> KnownUserIds() => [1, 2, 3, 4, 5, 6];
+}
