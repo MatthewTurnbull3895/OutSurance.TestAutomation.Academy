@@ -52,7 +52,10 @@ public sealed class Challenge2_CartTests : BaseTest
     [Description("🟢 Verify the cart badge increments to 1 when a single product is added.")]
     public async Task AddProduct_SingleItem_ShouldShowBadgeCountOfOne()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _productsPage.AddProductToCartAsync("Sauce Labs Backpack");
+
+        Assert.That(await _productsPage.GetCartBadgeCountAsync(), Is.EqualTo(1),
+            "Expected cart badge to show 1 after adding one item");
     }
 
     /// <summary>
@@ -70,7 +73,13 @@ public sealed class Challenge2_CartTests : BaseTest
     [Description("🟢 Verify the correct product appears in the cart after being added from the inventory.")]
     public async Task AddProduct_NavigateToCart_ShouldDisplayCorrectItem()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _productsPage.AddProductToCartAsync("Sauce Labs Bike Light");
+        var cartPage = await _productsPage.GoToCartAsync();
+
+        Assert.That(await cartPage.GetCartItemCountAsync(), Is.EqualTo(1),
+            "Expected exactly 1 item in the cart");
+        Assert.That(await cartPage.ContainsProductAsync("Sauce Labs Bike Light"), Is.True,
+            "Expected 'Sauce Labs Bike Light' to be present in the cart");
     }
 
     // -------------------------------------------------------------------------
@@ -93,7 +102,19 @@ public sealed class Challenge2_CartTests : BaseTest
     [Description("🟡 Verify the cart badge and cart contents are correct after adding multiple items.")]
     public async Task AddMultipleProducts_ShouldReflectCorrectBadgeAndCartContents()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _productsPage.AddProductToCartAsync("Sauce Labs Backpack");
+        await _productsPage.AddProductToCartAsync("Sauce Labs Bike Light");
+        await _productsPage.AddProductToCartAsync("Sauce Labs Bolt T-Shirt");
+
+        Assert.That(await _productsPage.GetCartBadgeCountAsync(), Is.EqualTo(3),
+            "Expected cart badge to show 3 after adding three items");
+
+        var cartPage = await _productsPage.GoToCartAsync();
+        var names = await cartPage.GetCartItemNamesAsync();
+
+        Assert.That(names, Does.Contain("Sauce Labs Backpack"), "Expected Backpack in cart");
+        Assert.That(names, Does.Contain("Sauce Labs Bike Light"), "Expected Bike Light in cart");
+        Assert.That(names, Does.Contain("Sauce Labs Bolt T-Shirt"), "Expected Bolt T-Shirt in cart");
     }
 
     /// <summary>
@@ -113,7 +134,18 @@ public sealed class Challenge2_CartTests : BaseTest
     [Description("🟡 Verify that removing one item from a multi-item cart leaves the remaining item intact.")]
     public async Task RemoveProduct_FromCartWithMultipleItems_ShouldUpdateCartCorrectly()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _productsPage.AddProductToCartAsync("Sauce Labs Backpack");
+        await _productsPage.AddProductToCartAsync("Sauce Labs Bike Light");
+        var cartPage = await _productsPage.GoToCartAsync();
+
+        await cartPage.RemoveProductAsync("Sauce Labs Backpack");
+
+        Assert.That(await cartPage.GetCartItemCountAsync(), Is.EqualTo(1),
+            "Expected exactly 1 item remaining after removal");
+        Assert.That(await cartPage.ContainsProductAsync("Sauce Labs Bike Light"), Is.True,
+            "Expected 'Sauce Labs Bike Light' to still be in the cart");
+        Assert.That(await cartPage.ContainsProductAsync("Sauce Labs Backpack"), Is.False,
+            "Expected 'Sauce Labs Backpack' to have been removed");
     }
 
     /// <summary>
@@ -132,7 +164,14 @@ public sealed class Challenge2_CartTests : BaseTest
     [Description("🟡 Verify that Continue Shopping navigates back to the inventory page.")]
     public async Task ContinueShopping_FromCart_ShouldReturnToProductsPage()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _productsPage.AddProductToCartAsync("Sauce Labs Backpack");
+        var cartPage = await _productsPage.GoToCartAsync();
+        var productsPage = await cartPage.ContinueShoppingAsync();
+
+        Assert.That(Page.Url, Does.Contain("inventory"),
+            "Expected URL to contain 'inventory' after clicking Continue Shopping");
+        Assert.That(await productsPage.IsDisplayedAsync(), Is.True,
+            "Expected the products page title to be visible");
     }
 
     // -------------------------------------------------------------------------
@@ -156,7 +195,15 @@ public sealed class Challenge2_CartTests : BaseTest
     [Description("🟠 Verify that cart contents persist when navigating away and returning to the cart.")]
     public async Task Cart_ShouldPersistContents_AfterNavigatingAwayAndBack()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _productsPage.AddProductToCartAsync("Sauce Labs Fleece Jacket");
+        var cartPage = await _productsPage.GoToCartAsync();
+        var productsPage = await cartPage.ContinueShoppingAsync();
+        cartPage = await productsPage.GoToCartAsync();
+
+        Assert.That(await cartPage.ContainsProductAsync("Sauce Labs Fleece Jacket"), Is.True,
+            "Expected cart to still contain 'Sauce Labs Fleece Jacket' after navigating away and back");
+        Assert.That(await productsPage.GetCartBadgeCountAsync(), Is.EqualTo(1),
+            "Expected cart badge to still show 1");
     }
 
     /// <summary>
@@ -180,7 +227,16 @@ public sealed class Challenge2_CartTests : BaseTest
     [Description("🟠 Verify each product can be independently added to and removed from the cart.")]
     public async Task AddAndRemoveEachProduct_ShouldMaintainCartAccuracy(string productName)
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _productsPage.AddProductToCartAsync(productName);
+        var cartPage = await _productsPage.GoToCartAsync();
+
+        Assert.That(await cartPage.ContainsProductAsync(productName), Is.True,
+            $"Expected '{productName}' to appear in the cart after being added");
+
+        await cartPage.RemoveProductAsync(productName);
+
+        Assert.That(await cartPage.IsEmptyAsync(), Is.True,
+            $"Expected cart to be empty after removing '{productName}'");
     }
 
     private static IEnumerable<string> SauceDemoProducts() =>

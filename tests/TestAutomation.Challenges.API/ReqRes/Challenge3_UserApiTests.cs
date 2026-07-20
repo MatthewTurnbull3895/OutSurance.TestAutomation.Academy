@@ -1,5 +1,7 @@
 using NUnit.Framework;
 using TestAutomation.Challenges.API.Base;
+using TestAutomation.Challenges.API.ReqRes.Models;
+using TestAutomation.Core.Http;
 
 namespace TestAutomation.Challenges.API.ReqRes;
 
@@ -46,7 +48,15 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     [Description("🟢 Verify GET /api/users returns 200 and a populated user list.")]
     public async Task GetUsers_ShouldReturn200_WithNonEmptyList()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var response = await Client.GetAsync("/api/users?page=1");
+        var body = await ApiClient.DeserialiseAsync<UserListResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK),
+            "Expected 200 OK");
+        Assert.That(body?.Data, Is.Not.Null.And.Not.Empty,
+            "Expected a non-empty data array");
+        Assert.That(body!.Data.All(u => u.Id > 0), Is.True,
+            "Expected every user to have a non-zero id");
     }
 
     /// <summary>
@@ -65,7 +75,17 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     [Description("🟢 Verify GET /api/users/2 returns 200 with the correct user data.")]
     public async Task GetUserById_ExistingUser_ShouldReturn200_WithCorrectData()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var response = await Client.GetAsync("/api/users/2");
+        var body = await ApiClient.DeserialiseAsync<SingleUserResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK),
+            "Expected 200 OK");
+        Assert.That(body?.Data, Is.Not.Null,
+            "Expected a data object in the response");
+        Assert.That(body!.Data.Id, Is.EqualTo(2),
+            "Expected user id to equal 2");
+        Assert.That(body.Data.Email, Is.Not.Null.And.Not.Empty,
+            "Expected email to be populated");
     }
 
     /// <summary>
@@ -81,7 +101,10 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     [Description("🟢 Verify GET /api/users/9999 returns 404 for a user that does not exist.")]
     public async Task GetUserById_NonExistentUser_ShouldReturn404()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var response = await Client.GetAsync("/api/users/9999");
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.NotFound),
+            "Expected 404 Not Found for a non-existent user");
     }
 
     // -------------------------------------------------------------------------
@@ -104,7 +127,20 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     [Description("🟡 Verify POST /api/users returns 201 and echoes back the created user data.")]
     public async Task CreateUser_ValidPayload_ShouldReturn201_WithCreatedUser()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var payload = new { name = "Academy Tester", job = "QA Engineer" };
+        var response = await Client.PostAsync("/api/users", payload);
+        var body = await ApiClient.DeserialiseAsync<CreateUserResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.Created),
+            "Expected 201 Created");
+        Assert.That(body?.Id, Is.Not.Null.And.Not.Empty,
+            "Expected a non-empty id in the response");
+        Assert.That(body?.CreatedAt, Is.Not.Null.And.Not.Empty,
+            "Expected a createdAt timestamp in the response");
+        Assert.That(body?.Name, Is.EqualTo("Academy Tester"),
+            "Expected name to match the payload");
+        Assert.That(body?.Job, Is.EqualTo("QA Engineer"),
+            "Expected job to match the payload");
     }
 
     /// <summary>
@@ -122,7 +158,18 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     [Description("🟡 Verify PUT /api/users/2 returns 200 and reflects the updated values.")]
     public async Task UpdateUser_WithPut_ShouldReturn200_WithUpdatedValues()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var payload = new { name = "Updated Tester", job = "Senior QA" };
+        var response = await Client.PutAsync("/api/users/2", payload);
+        var body = await ApiClient.DeserialiseAsync<UpdateUserResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK),
+            "Expected 200 OK");
+        Assert.That(body?.Name, Is.EqualTo("Updated Tester"),
+            "Expected name to reflect the updated value");
+        Assert.That(body?.Job, Is.EqualTo("Senior QA"),
+            "Expected job to reflect the updated value");
+        Assert.That(body?.UpdatedAt, Is.Not.Null.And.Not.Empty,
+            "Expected an updatedAt timestamp in the response");
     }
 
     /// <summary>
@@ -140,7 +187,16 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     [Description("🟡 Verify PATCH /api/users/2 returns 200 and reflects only the patched field.")]
     public async Task UpdateUser_WithPatch_ShouldReturn200_WithPatchedValue()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var payload = new { job = "Automation Lead" };
+        var response = await Client.PatchAsync("/api/users/2", payload);
+        var body = await ApiClient.DeserialiseAsync<UpdateUserResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK),
+            "Expected 200 OK");
+        Assert.That(body?.Job, Is.EqualTo("Automation Lead"),
+            "Expected job to reflect the patched value");
+        Assert.That(body?.UpdatedAt, Is.Not.Null.And.Not.Empty,
+            "Expected an updatedAt timestamp in the response");
     }
 
     /// <summary>
@@ -157,7 +213,13 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     [Description("🟡 Verify DELETE /api/users/2 returns 204 No Content.")]
     public async Task DeleteUser_ExistingUser_ShouldReturn204_WithEmptyBody()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var response = await Client.DeleteAsync("/api/users/2");
+        var body = await response.Content.ReadAsStringAsync();
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.NoContent),
+            "Expected 204 No Content");
+        Assert.That(body, Is.Empty,
+            "Expected an empty response body for 204");
     }
 
     // -------------------------------------------------------------------------
@@ -181,7 +243,19 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     [Description("🟠 Verify GET /api/users?page=2 returns correct pagination metadata.")]
     public async Task GetUsers_Page2_ShouldReturnCorrectPaginationMetadata()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var response = await Client.GetAsync("/api/users?page=2");
+        var body = await ApiClient.DeserialiseAsync<UserListResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK),
+            "Expected 200 OK");
+        Assert.That(body?.Page, Is.EqualTo(2),
+            "Expected page field to equal 2");
+        Assert.That(body?.PerPage, Is.GreaterThan(0),
+            "Expected per_page to be greater than 0");
+        Assert.That(body?.TotalPages, Is.GreaterThan(0),
+            "Expected total_pages to be greater than 0");
+        Assert.That(body?.Data.Count, Is.LessThanOrEqualTo(body?.PerPage),
+            "Expected data array length to not exceed per_page");
     }
 
     /// <summary>
@@ -204,7 +278,13 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     [Description("🟠 Verify each known user ID can be fetched individually with correct data.")]
     public async Task GetEachUser_ByKnownId_ShouldReturnMatchingId(int userId)
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var response = await Client.GetAsync($"/api/users/{userId}");
+        var body = await ApiClient.DeserialiseAsync<SingleUserResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK),
+            $"Expected 200 OK for user id {userId}");
+        Assert.That(body?.Data.Id, Is.EqualTo(userId),
+            $"Expected response id to match requested id {userId}");
     }
 
     private static IEnumerable<int> KnownUserIds() => [1, 2, 3, 4, 5, 6];

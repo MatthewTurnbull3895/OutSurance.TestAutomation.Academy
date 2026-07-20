@@ -65,7 +65,14 @@ public sealed class Challenge1_LoginTests : BaseTest
     [Description("🟢 Verify that a valid user can log in and is redirected to the products page.")]
     public async Task Login_WithValidCredentials_ShouldRedirectToProductsPage()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var productsPage = await _loginPage.LoginAsync(
+            Settings.SauceDemoStandardUser,
+            Settings.SauceDemoPassword);
+
+        Assert.That(Page.Url, Does.Contain("inventory"),
+            "Expected URL to contain 'inventory' after successful login");
+        Assert.That(await productsPage.GetPageTitleAsync(), Is.EqualTo("Products"),
+            "Expected products page title to read 'Products'");
     }
 
     /// <summary>
@@ -86,7 +93,15 @@ public sealed class Challenge1_LoginTests : BaseTest
     [Description("🟢 Verify that an incorrect password displays an error and prevents login.")]
     public async Task Login_WithInvalidPassword_ShouldDisplayErrorMessage()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _loginPage.AttemptLoginAsync(Settings.SauceDemoStandardUser, "wrong_password");
+
+        Assert.That(await _loginPage.IsDisplayedAsync(), Is.True,
+            "Expected user to remain on the login page after invalid password");
+        Assert.That(await _loginPage.IsErrorDisplayedAsync(), Is.True,
+            "Expected an error banner to be visible");
+        Assert.That(await _loginPage.GetErrorMessageAsync(),
+            Does.Contain("Username and password do not match"),
+            "Expected error message to mention mismatched credentials");
     }
 
     /// <summary>
@@ -106,7 +121,13 @@ public sealed class Challenge1_LoginTests : BaseTest
     [Description("🟢 Verify that submitting the form with an empty username shows a validation error.")]
     public async Task Login_WithEmptyUsername_ShouldShowUsernameRequiredError()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _loginPage.AttemptLoginAsync(string.Empty, Settings.SauceDemoPassword);
+
+        Assert.That(await _loginPage.IsErrorDisplayedAsync(), Is.True,
+            "Expected a validation error banner to be visible");
+        Assert.That(await _loginPage.GetErrorMessageAsync(),
+            Does.Contain("Username is required"),
+            "Expected error message to say 'Username is required'");
     }
 
     // -------------------------------------------------------------------------
@@ -130,7 +151,15 @@ public sealed class Challenge1_LoginTests : BaseTest
     [Description("🟡 Verify that a locked-out user sees a specific error message and cannot log in.")]
     public async Task Login_WithLockedOutUser_ShouldDisplayLockedOutError()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _loginPage.AttemptLoginAsync(
+            Settings.SauceDemoLockedUser,
+            Settings.SauceDemoPassword);
+
+        Assert.That(await _loginPage.IsDisplayedAsync(), Is.True,
+            "Expected user to remain on the login page");
+        Assert.That(await _loginPage.GetErrorMessageAsync(),
+            Does.Contain("Sorry, this user has been locked out"),
+            "Expected locked-out error message");
     }
 
     /// <summary>
@@ -150,7 +179,13 @@ public sealed class Challenge1_LoginTests : BaseTest
     [Description("🟡 Verify that submitting the form with an empty password shows a validation error.")]
     public async Task Login_WithEmptyPassword_ShouldShowPasswordRequiredError()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _loginPage.AttemptLoginAsync(Settings.SauceDemoStandardUser, string.Empty);
+
+        Assert.That(await _loginPage.IsErrorDisplayedAsync(), Is.True,
+            "Expected a validation error banner to be visible");
+        Assert.That(await _loginPage.GetErrorMessageAsync(),
+            Does.Contain("Password is required"),
+            "Expected error message to say 'Password is required'");
     }
 
     // -------------------------------------------------------------------------
@@ -177,7 +212,10 @@ public sealed class Challenge1_LoginTests : BaseTest
     [Description("🟠 Verify that each valid SauceDemo user account can successfully authenticate.")]
     public async Task Login_WithEachValidUser_ShouldSucceed(string username)
     {
-        throw new NotImplementedException("Complete this challenge!");
+        await _loginPage.LoginAsync(username, Settings.SauceDemoPassword);
+
+        Assert.That(Page.Url, Does.Contain("inventory"),
+            $"Expected '{username}' to be redirected to inventory after login");
     }
 
     private static IEnumerable<string> ValidUsernames() =>

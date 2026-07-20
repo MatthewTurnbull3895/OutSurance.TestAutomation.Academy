@@ -1,5 +1,7 @@
 using NUnit.Framework;
 using TestAutomation.Challenges.API.Base;
+using TestAutomation.Challenges.API.ReqRes.Models;
+using TestAutomation.Core.Http;
 
 namespace TestAutomation.Challenges.API.ReqRes;
 
@@ -47,7 +49,14 @@ public sealed class Challenge4_AuthApiTests : BaseApiTest
     [Description("🟢 Verify POST /api/login with valid credentials returns 200 and a non-empty token.")]
     public async Task Login_ValidCredentials_ShouldReturn200_WithToken()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var payload = new { email = "eve.holt@reqres.in", password = "cityslicka" };
+        var response = await Client.PostAsync("/api/login", payload);
+        var body = await ApiClient.DeserialiseAsync<TokenResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK),
+            "Expected 200 OK for valid login");
+        Assert.That(body?.Token, Is.Not.Null.And.Not.Empty,
+            "Expected a non-empty token in the response");
     }
 
     /// <summary>
@@ -64,7 +73,14 @@ public sealed class Challenge4_AuthApiTests : BaseApiTest
     [Description("🟢 Verify POST /api/login without a password returns 400 with an error message.")]
     public async Task Login_MissingPassword_ShouldReturn400_WithErrorMessage()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var payload = new { email = "eve.holt@reqres.in" };
+        var response = await Client.PostAsync("/api/login", payload);
+        var body = await ApiClient.DeserialiseAsync<ErrorResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest),
+            "Expected 400 Bad Request when password is missing");
+        Assert.That(body?.Error, Is.EqualTo("Missing password"),
+            "Expected error message to say 'Missing password'");
     }
 
     // -------------------------------------------------------------------------
@@ -86,7 +102,16 @@ public sealed class Challenge4_AuthApiTests : BaseApiTest
     [Description("🟡 Verify POST /api/register with valid credentials returns 200, an id and a token.")]
     public async Task Register_ValidCredentials_ShouldReturn200_WithIdAndToken()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var payload = new { email = "eve.holt@reqres.in", password = "pistol" };
+        var response = await Client.PostAsync("/api/register", payload);
+        var body = await ApiClient.DeserialiseAsync<RegisterResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK),
+            "Expected 200 OK for valid registration");
+        Assert.That(body?.Id, Is.GreaterThan(0),
+            "Expected a non-zero id in the response");
+        Assert.That(body?.Token, Is.Not.Null.And.Not.Empty,
+            "Expected a non-empty token in the response");
     }
 
     /// <summary>
@@ -103,7 +128,14 @@ public sealed class Challenge4_AuthApiTests : BaseApiTest
     [Description("🟡 Verify POST /api/register without a password returns 400 with an error message.")]
     public async Task Register_MissingPassword_ShouldReturn400_WithErrorMessage()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var payload = new { email = "eve.holt@reqres.in" };
+        var response = await Client.PostAsync("/api/register", payload);
+        var body = await ApiClient.DeserialiseAsync<ErrorResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest),
+            "Expected 400 Bad Request when password is missing");
+        Assert.That(body?.Error, Is.EqualTo("Missing password"),
+            "Expected error message to say 'Missing password'");
     }
 
     // -------------------------------------------------------------------------
@@ -127,7 +159,17 @@ public sealed class Challenge4_AuthApiTests : BaseApiTest
     [Description("🟠 Verify that various malformed login payloads all return 400 with an error.")]
     public async Task Login_InvalidPayloads_ShouldAllReturn400_WithError(string email, string? password)
     {
-        throw new NotImplementedException("Complete this challenge!");
+        var payload = password is null
+            ? (object)new { email }
+            : new { email, password };
+
+        var response = await Client.PostAsync("/api/login", payload);
+        var body = await ApiClient.DeserialiseAsync<ErrorResponse>(response);
+
+        Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.BadRequest),
+            $"Expected 400 Bad Request for email='{email}', password='{password}'");
+        Assert.That(body?.Error, Is.Not.Null.And.Not.Empty,
+            "Expected a non-empty error field in the response");
     }
 
     private static IEnumerable<object?[]> InvalidLoginPayloads() =>
