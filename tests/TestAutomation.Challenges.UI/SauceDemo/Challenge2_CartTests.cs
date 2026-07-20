@@ -19,7 +19,12 @@ namespace TestAutomation.Challenges.UI.SauceDemo;
 ///
 /// Setup:
 ///   Each test begins already logged in as the standard user.
-///   The helper method <see cref="LoginAsStandardUserAsync"/> handles this.
+///   The <see cref="LoginAsStandardUserAsync"/> helper (at the bottom of this file)
+///   handles this automatically in [SetUp] — you do not need to log in yourself.
+///
+///   Credentials used by the helper (for reference only):
+///   Settings.SauceDemoStandardUser  →  "standard_user"
+///   Settings.SauceDemoPassword      →  "secret_sauce"
 ///
 /// Acceptance criteria are stated in each test's XML doc comment.
 /// Implement ONLY the method body — do not change method signatures or attributes.
@@ -220,7 +225,8 @@ public sealed class Challenge2_CartTests : BaseTest
     ///   • Each product name appears in the cart when added.
     ///   • The cart is empty after the product is removed.
     ///
-    /// Hint: Use [TestCaseSource] to supply each product name.
+    /// Hint: The product names are already provided via [TestCaseSource] below —
+    ///       use <c>_productsPage</c> to add and <c>CartPage</c> to remove.
     /// </summary>
     [Test]
     [TestCaseSource(nameof(SauceDemoProducts))]
