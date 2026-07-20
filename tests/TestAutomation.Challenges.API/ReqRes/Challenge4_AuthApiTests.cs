@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using TestAutomation.Challenges.API.Base;
+using TestAutomation.Core.Http;
 
 namespace TestAutomation.Challenges.API.ReqRes;
 
@@ -16,10 +17,18 @@ namespace TestAutomation.Challenges.API.ReqRes;
 ///   • Writing parameterised negative tests
 ///
 /// Setup:
-///   <see cref="BaseApiTest.Client"/> is pre-configured with the ReqRes base URL.
+///   <see cref="BaseApiTest.Client"/> is pre-configured with the ReqRes base URL
+///   and the required API key — no additional setup is needed.
 ///   ReqRes only accepts specific pre-seeded email addresses.
-///   Valid credentials: email "eve.holt@reqres.in", password "cityslicka" (login)
-///                      email "eve.holt@reqres.in", password "pistol"     (register)
+///
+///   Valid credentials (these are public test credentials for reqres.in):
+///     Login:    email "eve.holt@reqres.in",  password "cityslicka"
+///     Register: email "eve.holt@reqres.in",  password "pistol"
+///
+///   To deserialise a JSON response body into a typed object use:
+///   <code>
+///   var body = await ApiClient.DeserialiseAsync&lt;MyResponseType&gt;(response);
+///   </code>
 ///
 /// Acceptance criteria are stated in each test's XML doc comment.
 /// Implement ONLY the method body — do not change method signatures or attributes.
@@ -111,7 +120,7 @@ public sealed class Challenge4_AuthApiTests : BaseApiTest
     // -------------------------------------------------------------------------
 
     /// <summary>
-    /// Test: POST /api/login with undefined credentials returns HTTP 400.
+    /// Test: POST /api/login with invalid or unrecognised credentials returns HTTP 400.
     ///
     /// Steps:
     ///   1. For each invalid payload supplied by the test case source, send POST /api/login.
@@ -120,7 +129,9 @@ public sealed class Challenge4_AuthApiTests : BaseApiTest
     ///   • Every request returns 400 Bad Request.
     ///   • Every response body contains a non-empty "error" field.
     ///
-    /// Hint: Use [TestCaseSource] to supply multiple invalid payloads.
+    /// Hint: The invalid payloads are already provided via [TestCaseSource] below —
+    ///       use the <c>email</c> and <c>password</c> parameters to build each request body.
+    ///       Note: <c>password</c> may be <c>null</c> — handle this case in your payload construction.
     /// </summary>
     [Test]
     [TestCaseSource(nameof(InvalidLoginPayloads))]

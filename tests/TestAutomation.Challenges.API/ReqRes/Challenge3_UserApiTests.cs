@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using TestAutomation.Challenges.API.Base;
+using TestAutomation.Core.Http;
 
 namespace TestAutomation.Challenges.API.ReqRes;
 
@@ -16,8 +17,16 @@ namespace TestAutomation.Challenges.API.ReqRes;
 ///   • Data-driven API tests with [TestCaseSource]
 ///
 /// Setup:
-///   <see cref="BaseApiTest.Client"/> is pre-configured with the ReqRes base URL.
+///   <see cref="BaseApiTest.Client"/> is pre-configured with the ReqRes base URL
+///   and the required API key — no additional setup is needed.
 ///   All endpoints are relative, e.g. "/api/users" or "/api/users/2".
+///
+///   To deserialise a JSON response body into a typed object use:
+///   <code>
+///   var body = await ApiClient.DeserialiseAsync&lt;MyResponseType&gt;(response);
+///   </code>
+///   You are free to define your own response model classes, or use
+///   anonymous types / <c>JsonDocument</c> for simpler assertions.
 ///
 /// Acceptance criteria are stated in each test's XML doc comment.
 /// Implement ONLY the method body — do not change method signatures or attributes.
@@ -197,7 +206,8 @@ public sealed class Challenge3_UserApiTests : BaseApiTest
     ///   • Each request returns 200 OK.
     ///   • The "id" field in each response matches the requested ID.
     ///
-    /// Hint: Use [TestCaseSource] to supply each user ID.
+    /// Hint: The user IDs are already provided via [TestCaseSource] below —
+    ///       use the <c>userId</c> parameter to build the endpoint path.
     /// </summary>
     [Test]
     [TestCaseSource(nameof(KnownUserIds))]
