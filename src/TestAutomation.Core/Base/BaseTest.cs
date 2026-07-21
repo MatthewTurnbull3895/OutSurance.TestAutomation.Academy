@@ -59,7 +59,7 @@ public abstract class BaseTest
     [OneTimeSetUp]
     public async Task OneTimeSetUpAsync()
     {
-        PlaywrightInstance = await Microsoft.Playwright.Playwright.CreateAsync();
+        PlaywrightInstance = await Playwright.CreateAsync();
 
         var launchOptions = new BrowserTypeLaunchOptions
         {
@@ -90,7 +90,11 @@ public abstract class BaseTest
     {
         Context = await Browser.NewContextAsync(new BrowserNewContextOptions
         {
-            ViewportSize = new ViewportSize { Width = 1920, Height = 1080 },
+            ViewportSize = new ViewportSize 
+            { 
+                Width = 1920, 
+                Height = 1080 
+            },
             BaseURL      = Settings.SauceDemoBaseUrl
         });
 

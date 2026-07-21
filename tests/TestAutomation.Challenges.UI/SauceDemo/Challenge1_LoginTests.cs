@@ -65,7 +65,21 @@ public sealed class Challenge1_LoginTests : BaseTest
     [Description("🟢 Verify that a valid user can log in and is redirected to the products page.")]
     public async Task Login_WithValidCredentials_ShouldRedirectToProductsPage()
     {
-        throw new NotImplementedException("Complete this challenge!");
+        //Arrange
+        string expectedProductPageTitle = "Products";
+
+        //Act
+        var _productsPage = await _loginPage.LoginAsync(Settings.SauceDemoStandardUser,Settings.SauceDemoPassword);
+        var url = Page.Url;
+        var title = await _productsPage.GetPageTitleAsync();
+
+
+        //Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(url, Does.Contain("inventory"), "Page URL did not contain the word - inventory");
+            Assert.That(title, Is.EqualTo(expectedProductPageTitle), $"Products page title was not {expectedProductPageTitle}");
+        });
     }
 
     /// <summary>

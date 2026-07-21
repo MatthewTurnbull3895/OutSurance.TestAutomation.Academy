@@ -1,6 +1,6 @@
 {
   "Browser": "chromium",
-  "Headless": true,
+  "Headless": false,
   "SlowMo": 0,
   "DefaultTimeoutMs": 30000,
 
