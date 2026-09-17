@@ -1,15 +1,15 @@
 {
-  "Browser": "chromium",
-  "Headless": true,
-  "SlowMo": 0,
-  "DefaultTimeoutMs": 30000,
+    "Browser": "chromium",
+    "Headless": true,
+    "SlowMo": 0,
+    "DefaultTimeoutMs": 30000,
 
-  "SauceDemoBaseUrl": "https://www.saucedemo.com",
-  "TheInternetBaseUrl": "https://the-internet.herokuapp.com",
-  "DemoQaBaseUrl": "https://demoqa.com",
+    "SauceDemoBaseUrl": "https://www.saucedemo.com",
+    "TheInternetBaseUrl": "https://the-internet.herokuapp.com",
+    "DemoQaBaseUrl": "https://demoqa.com",
 
-  "SauceDemoStandardUser": "standard_user",
-  "SauceDemoPassword": "secret_sauce",
-  "SauceDemoLockedUser": "locked_out_user",
-  "SauceDemoProblemUser": "problem_user"
+    "SauceDemoStandardUser": "standard_user",
+    "SauceDemoPassword": "secret_sauce",
+    "SauceDemoLockedUser": "locked_out_user",
+    "SauceDemoProblemUser": "problem_user"
 }
