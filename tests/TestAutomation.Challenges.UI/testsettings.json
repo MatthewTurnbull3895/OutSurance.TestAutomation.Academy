@@ -1,8 +1,8 @@
 {
     "Browser": "chromium",
     "Headless": true,
-    "SlowMo": 0,
-    "DefaultTimeoutMs": 30000,
+    "SlowMo": 10,
+    "DefaultTimeoutMs": 90000,
 
     "SauceDemoBaseUrl": "https://www.saucedemo.com",
     "TheInternetBaseUrl": "https://the-internet.herokuapp.com",

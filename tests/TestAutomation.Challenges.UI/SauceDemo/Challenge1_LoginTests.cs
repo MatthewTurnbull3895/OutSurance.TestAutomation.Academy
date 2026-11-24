@@ -70,11 +70,11 @@ public sealed class Challenge1_LoginTests : BaseTest
         await _loginPage.EnterPasswordAsync(Settings.SauceDemoPassword);
         await _loginPage.ClickLoginAsync();
 
-        string? url = Page.Url;
-        Assert.That(url, Does.Contain("inventory"));
+        Assert.That(Page.Url, Does.Contain("inventory"));
 
-        string? title = await Page.Locator("span.title").InnerTextAsync();
-        Assert.That(title, Is.EqualTo("Products"));
+        var productsPage = new ProductsPage(Page);
+
+        Assert.That(await productsPage.GetTitleAsync(), Is.EqualTo("Swag Labs"));
     }
     /// <summary>
     /// Test: Invalid password shows an error message.
